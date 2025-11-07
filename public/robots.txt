@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://cntpdlab.xyz
+
+# Sitemaps
+Sitemap: https://cntpdlab.xyz/sitemap.xml
