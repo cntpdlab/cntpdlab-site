@@ -1,0 +1,16 @@
+{
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.cntpdlab.xyz"
+        }
+      ],
+      "destination": "https://cntpdlab.xyz/:path*",
+      "statusCode": 308
+    }
+  ]
+}
+

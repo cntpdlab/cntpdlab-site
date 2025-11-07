@@ -1,0 +1,43 @@
+{
+  "badge": {
+    "status": "CntpdLab · MVPs in weeks"
+  },
+  "nav": {
+    "work": "Work",
+    "expertise": "Expertise",
+    "contact": "Contact"
+  },
+  "hero": {
+    "headlineLine1": "Premium full-stack MVPs.",
+    "headlineLine2": "Delivered fast.",
+    "subtitle": "Powered by Next.js, React, Tailwind, and Python — shipping modern web apps and Telegram bots in weeks.",
+    "ctaPrimary": "View My Work",
+    "ctaSecondary": "Get in Touch",
+    "ctaTelegram": "Telegram →"
+  },
+  "projects": {
+    "title": "Lead Projects",
+    "subtitle": "Selected builds proving how CntpdLab scales ideas into resilient platforms across industries.",
+    "ctaRequest": "Request Similar",
+    "ctaOutline": "View Outline"
+  },
+  "contact": {
+    "title": "Partner with CntpdLab",
+    "subtitle": "Share a quick brief — we’ll return a technical scope within 48h.",
+    "subtitleSecondary": "Prefer ASAP? DM on Telegram",
+    "name": "Name",
+    "email": "Email",
+    "notes": "Project Notes",
+    "needFasterTitle": "Need it faster?",
+    "needFasterCopy": "Drop a DM on Telegram",
+    "submit": "Request Scope",
+    "sending": "Sending...",
+    "toast": {
+      "invalid": "Please provide a valid name and contact.",
+      "notes": "Tell us a bit more about the project.",
+      "success": "Request sent ✅ — we’ll reply within 48h",
+      "error": "Failed to send. Try again."
+    }
+  }
+}
+

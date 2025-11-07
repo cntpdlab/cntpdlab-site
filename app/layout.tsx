@@ -2,6 +2,7 @@ import type React from "react"
 import type { Metadata } from "next"
 import { Inter, Roboto_Mono } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
+import { I18nProvider } from "@/hooks/use-i18n"
 import "./globals.css"
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
@@ -42,16 +43,18 @@ export default function RootLayout({
   return (
     <html lang="en" className={`dark ${inter.variable} ${robotoMono.variable}`} suppressHydrationWarning>
       <body
-        className={`relative min-h-screen bg-black font-sans text-white antialiased [background-image:radial-gradient(900px_450px_at_20%_0%,rgba(16,185,129,.14),transparent),radial-gradient(800px_400px_at_80%_-10%,rgba(124,58,237,.12),transparent),linear-gradient(rgba(255,255,255,.04)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.04)_1px,transparent_1px)] [background-size:auto,auto,24px_24px,24px_24px] [background-repeat:no-repeat,no-repeat,repeat,repeat]`}
+        className={`relative min-h-screen bg-black font-sans text-white antialiased prose-invert [background-image:radial-gradient(900px_450px_at_20%_0%,rgba(16,185,129,.14),transparent),radial-gradient(800px_400px_at_80%_-10%,rgba(124,58,237,.12),transparent),linear-gradient(rgba(255,255,255,.04)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.04)_1px,transparent_1px)] [background-size:auto,auto,24px_24px,24px_24px] [background-repeat:no-repeat,no-repeat,repeat,repeat]`}
       >
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 bg-[url('/noise.png')] opacity-[.06] mix-blend-overlay"
-        />
-        <div className="relative flex min-h-screen flex-col">
-          {children}
-          <Analytics />
-        </div>
+        <I18nProvider>
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 bg-[url('/noise.png')] opacity-[.06] mix-blend-overlay"
+          />
+          <div className="relative flex min-h-screen flex-col">
+            {children}
+            <Analytics />
+          </div>
+        </I18nProvider>
       </body>
     </html>
   )

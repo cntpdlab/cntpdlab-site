@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react"
 import CSSCover from "@/components/CSSCover"
+import { useI18n } from "@/hooks/use-i18n"
 import { ArrowUpRight, Mail, Zap, Code2, Rocket, Users } from "lucide-react"
 import { motion, useReducedMotion } from "framer-motion"
 
@@ -45,12 +46,18 @@ const useFadeIn = (stagger = 0.08) => {
 
 const Header = () => {
   const fadeIn = useFadeIn()
+  const { t, lang, setLang } = useI18n()
+  const languages: { code: "en" | "ua"; label: string }[] = [
+    { code: "en", label: "EN" },
+    { code: "ua", label: "UA" },
+  ]
+
   return (
     <motion.header
       initial="hidden"
       animate="visible"
       variants={fadeIn}
-      className="mx-auto flex w-full max-w-6xl items-center justify-between rounded-3xl border border-white/10 bg-white/5 px-6 py-4 shadow-[0_10px_40px_rgba(0,0,0,.35)] backdrop-blur-md"
+      className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-4 rounded-3xl border border-white/10 bg-white/5 px-4 py-4 shadow-[0_10px_40px_rgba(0,0,0,.35)] backdrop-blur-md transition-smooth md:grid md:grid-cols-[1fr_auto_auto] md:items-center md:gap-6 md:px-6"
     >
       <div className="flex items-center gap-3 text-sm font-medium tracking-wide text-white">
         <span className="inline-flex h-9 w-9 items-center justify-center rounded-2xl bg-emerald-500 text-base font-semibold text-black shadow-[0_6px_20px_rgba(16,185,129,.35)]">
@@ -63,18 +70,27 @@ const Header = () => {
       </div>
 
       <nav className="hidden items-center gap-6 text-sm text-white/60 md:flex">
-        <a href="#projects" className="transition-smooth hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60">
-          Work
+        <a
+          href="#projects"
+          className="transition-smooth hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60"
+        >
+          {t("nav.work")}
         </a>
-        <a href="#expertise" className="transition-smooth hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60">
-          Expertise
+        <a
+          href="#expertise"
+          className="transition-smooth hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60"
+        >
+          {t("nav.expertise")}
         </a>
-        <a href="#contact" className="transition-smooth hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60">
-          Contact
+        <a
+          href="#contact"
+          className="transition-smooth hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60"
+        >
+          {t("nav.contact")}
         </a>
       </nav>
 
-      <div className="flex items-center gap-3">
+      <div className="flex flex-wrap items-center gap-2">
         <a
           href="mailto:cntpdlab@gmail.com"
           className="hidden rounded-2xl border border-white/10 bg-white/5 px-4 py-2 text-xs font-semibold text-white transition-smooth hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 md:inline-flex"
@@ -83,13 +99,31 @@ const Header = () => {
         </a>
         <a
           href="https://t.me/cntpdlab"
-          className="inline-flex items-center justify-center gap-2 rounded-2xl bg-white px-4 py-2 text-xs font-semibold text-black transition-smooth hover:bg-white/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60"
+          className="inline-flex min-h-[40px] items-center justify-center gap-2 rounded-xl bg-white px-4 py-2 text-xs font-semibold text-black transition-smooth hover:bg-white/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60"
           target="_blank"
           rel="noreferrer"
         >
           @cntpdlab
           <ArrowUpRight className="h-3 w-3" />
         </a>
+        <div className="flex items-center gap-1">
+          {languages.map((language) => {
+            const isActive = lang === language.code
+            return (
+              <button
+                key={language.code}
+                type="button"
+                onClick={() => setLang(language.code)}
+                aria-pressed={isActive}
+                className={`inline-flex min-h-[40px] items-center justify-center rounded-xl px-3 py-1 text-sm font-medium text-white transition-smooth hover:bg-white/5 active:bg-white/10 ring-1 ring-white/10 ${
+                  isActive ? "bg-white/10" : ""
+                }`}
+              >
+                {language.label}
+              </button>
+            )
+          })}
+        </div>
       </div>
     </motion.header>
   )
@@ -98,6 +132,7 @@ const Header = () => {
 const HeroSection = () => {
   const fadeIn = useFadeIn()
   const [showCopyToast, setShowCopyToast] = useState(false)
+  const { t } = useI18n()
 
   useEffect(() => {
     if (!showCopyToast) return
@@ -130,8 +165,8 @@ const HeroSection = () => {
   }
 
   return (
-    <section className="relative flex flex-col justify-center px-4 pb-16 pt-24 sm:px-6 sm:pb-20 sm:pt-28 lg:pb-24 lg:pt-32">
-      <div className="container relative mx-auto flex w-full max-w-6xl flex-col items-center gap-10 text-center text-white/70">
+    <section className="relative scroll-mt-24">
+      <div className="container relative mx-auto flex w-full max-w-6xl flex-col items-center gap-10 px-4 pb-16 pt-24 text-center text-white/70 sm:pb-20 sm:pt-28 lg:pb-24 lg:pt-32">
         <Header />
         <motion.div
           initial="hidden"
@@ -148,24 +183,24 @@ const HeroSection = () => {
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400/70" aria-hidden="true" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
             </span>
-            CntpdLab · MVPs in weeks
+            {t("badge.status")}
           </motion.div>
 
           <motion.h1
             variants={fadeIn}
             custom={1}
-            className="text-balance text-5xl font-extrabold leading-[0.95] tracking-tight text-white sm:text-6xl lg:text-7xl"
+            className="text-balance max-w-[20ch] break-words text-4xl font-extrabold leading-tight tracking-tight text-white hyphens-auto sm:text-5xl md:max-w-[14ch] md:text-6xl lg:text-7xl"
           >
-            <span className="block">Premium full-stack MVPs.</span>
-            <span className="block">Delivered fast.</span>
+            <span className="block">{t("hero.headlineLine1")}</span>
+            <span className="block">{t("hero.headlineLine2")}</span>
           </motion.h1>
 
           <motion.p
             variants={fadeIn}
             custom={2}
-            className="mt-5 max-w-2xl text-base text-white/70 leading-relaxed sm:text-lg"
+            className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-white/70 sm:text-lg"
           >
-            Powered by Next.js, React, Tailwind, and Python — shipping modern web apps and Telegram bots in weeks.
+            {t("hero.subtitle")}
           </motion.p>
 
           <motion.div
@@ -173,8 +208,8 @@ const HeroSection = () => {
             custom={3}
             className="mt-8 flex flex-wrap items-center justify-center gap-3 text-white/80 sm:gap-4"
           >
-            <a href="#projects" className={primaryButtonClasses} aria-label="View CntpdLab projects">
-              View My Work
+            <a href="#projects" className={primaryButtonClasses} aria-label={t("hero.ctaPrimary")}>
+              {t("hero.ctaPrimary")}
               <ArrowUpRight className="h-4 w-4" />
             </a>
             <div className="relative">
@@ -186,7 +221,7 @@ const HeroSection = () => {
                 title="Send email or copy address"
               >
                 <Mail className="h-4 w-4" />
-                Get in Touch
+                {t("hero.ctaSecondary")}
               </a>
               {showCopyToast && (
                 <span
@@ -205,7 +240,7 @@ const HeroSection = () => {
               rel="noreferrer"
               title="Open Telegram chat"
             >
-              Telegram →
+              {t("hero.ctaTelegram")}
             </a>
           </motion.div>
         </motion.div>
@@ -224,7 +259,7 @@ const ExpertiseSection = () => {
   ]
 
   return (
-    <section id="expertise" className="relative py-24 text-white/70 sm:py-28">
+    <section id="expertise" className="relative scroll-mt-24 py-12 text-white/70 sm:py-16 lg:py-24">
       <div className="container mx-auto max-w-6xl px-4 sm:px-6">
         <motion.div
           initial="hidden"
@@ -362,12 +397,13 @@ const ProjectsSection = () => {
   const prefersReducedMotion = useReducedMotion()
   const [activeOutline, setActiveOutline] = useState<Sample | null>(null)
   const closeButtonRef = useRef<HTMLButtonElement | null>(null)
+  const { t } = useI18n()
 
   const coverKind = (title: string): "crm" | "tg" | "ops" | "verify" => {
     const t = title.toLowerCase()
     if (t.includes("crm")) return "crm"
-    if (t.includes("telegram") && t.includes("suite")) return "tg"
     if (t.includes("verifier")) return "verify"
+    if (t.includes("automation")) return "tg"
     return "ops"
   }
 
@@ -425,7 +461,7 @@ const ProjectsSection = () => {
   }
 
   return (
-    <section id="projects" className="relative py-24 text-white/70 sm:py-28">
+    <section id="projects" className="relative scroll-mt-24 py-12 text-white/70 sm:py-16 lg:py-24">
       <div className="container mx-auto max-w-6xl px-4 sm:px-6">
         <motion.div
           initial="hidden"
@@ -435,10 +471,10 @@ const ProjectsSection = () => {
           className="mx-auto mb-16 max-w-3xl text-center"
         >
           <motion.h2 variants={fadeIn} custom={0} className="text-3xl font-semibold text-white sm:text-4xl md:text-5xl">
-            Lead Projects
+            {t("projects.title")}
           </motion.h2>
-          <motion.p variants={fadeIn} custom={1} className="mt-4 whitespace-nowrap text-lg text-white/70">
-            Selected builds proving how CntpdLab scales ideas into resilient platforms across industries.
+          <motion.p variants={fadeIn} custom={1} className="mt-4 text-lg text-white/70">
+            {t("projects.subtitle")}
           </motion.p>
         </motion.div>
 
@@ -453,19 +489,19 @@ const ProjectsSection = () => {
             <motion.article
               key={sample.title}
               variants={cardVariants}
-              className="relative flex h-full flex-col overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-6 text-white/70 shadow-[0_10px_40px_rgba(0,0,0,.35)] backdrop-blur-md transition-all duration-300 will-change-transform hover:border-white/20 hover:bg-white/10 hover:shadow-[0_10px_40px_rgba(0,0,0,.35)] hover:scale-[1.02]"
+              className="relative flex h-full flex-col overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-5 text-white/70 shadow-[0_10px_40px_rgba(0,0,0,.35)] backdrop-blur-md transition-all duration-300 will-change-transform hover:border-white/20 hover:bg-white/10 hover:shadow-[0_10px_40px_rgba(0,0,0,.35)] hover:scale-[1.02] sm:p-6"
             >
               {sample.private && (
-                <span className="absolute right-3 top-3 rounded-full border border-white/10 bg-white/10 px-2 py-1 text-[10px] tracking-wide text-white/70 backdrop-blur-sm">
+                <span className="absolute right-3 top-3 rounded-full border border-white/10 bg-white/10 px-2 py-1 text-[11px] tracking-wide text-white/70 backdrop-blur-sm sm:text-xs">
                   PRIVATE
                 </span>
               )}
 
-              <CSSCover kind={coverKind(sample.title)} className="mb-5" />
+              <CSSCover kind={coverKind(sample.title)} className="mb-5 w-full" />
 
               <div className="flex flex-1 flex-col">
-                <h3 className="text-xl font-semibold text-white">{sample.title}</h3>
-                <p className="mt-3 text-sm text-white/70">{sample.desc}</p>
+                <h3 className="text-lg font-semibold text-white sm:text-xl">{sample.title}</h3>
+                <p className="mt-3 text-sm text-white/70 sm:text-base">{sample.desc}</p>
 
                 <div className="mt-4 flex flex-wrap gap-2">
                   {sample.tags.map((tag) => (
@@ -476,24 +512,24 @@ const ProjectsSection = () => {
                 </div>
 
                 <div className="mt-auto">
-                  <div className="mt-4 flex gap-2">
+                  <div className="mt-4 flex flex-col gap-2 sm:flex-row">
                     <button
                       type="button"
                       onClick={handleRequestSimilar}
-                      className="inline-flex items-center justify-center rounded-2xl px-4 py-2 text-sm font-medium bg-emerald-500 hover:bg-emerald-400 text-black"
-                      aria-label="Request a similar build"
-                      title="Request a similar build"
+                      className="inline-flex w-full items-center justify-center rounded-2xl bg-emerald-500 px-4 py-2 text-sm font-medium text-black hover:bg-emerald-400 sm:w-auto"
+                      aria-label={t("projects.ctaRequest")}
+                      title={t("projects.ctaRequest")}
                     >
-                      Request Similar
+                      {t("projects.ctaRequest")}
                     </button>
                     <button
                       type="button"
                       onClick={() => setActiveOutline(sample)}
-                      className="inline-flex items-center justify-center rounded-2xl px-4 py-2 text-sm font-medium bg-white/5 hover:bg-white/10 border border-white/10 text-white"
-                      aria-label="View outline"
-                      title="View outline"
+                      className="inline-flex w-full items-center justify-center rounded-2xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-white hover:bg-white/10 sm:w-auto"
+                      aria-label={t("projects.ctaOutline")}
+                      title={t("projects.ctaOutline")}
                     >
-                      View Outline
+                      {t("projects.ctaOutline")}
                     </button>
                   </div>
                 </div>
@@ -574,7 +610,7 @@ const RecentMVPsSection = () => {
       initial="hidden"
       whileInView="show"
       viewport={{ once: true, amount: 0.2 }}
-      className="relative py-20 sm:py-28"
+      className="relative py-12 sm:py-16 lg:py-24"
       variants={staggerVariants}
     >
       <motion.div variants={staggerVariants} className="mx-auto max-w-5xl px-4 text-center">
@@ -613,6 +649,7 @@ const ContactSection = () => {
   const [toast, setToast] = useState<{ show: boolean; type: "success" | "error"; msg: string }>(
     { show: false, type: "success", msg: "" }
   )
+  const { t } = useI18n()
 
   useEffect(() => {
     if (!toast.show) return
@@ -638,14 +675,14 @@ const ContactSection = () => {
     }
 
     if (name.length < 2 || (!email.includes("@") && !email.startsWith("@"))) {
-      setToast({ show: true, type: "error", msg: "Please provide a valid name and contact." })
+      setToast({ show: true, type: "error", msg: t("contact.toast.invalid") })
       const firstField = form.elements.namedItem("name") as HTMLElement | null
       firstField?.focus()
       return
     }
 
     if (notes.length < 10) {
-      setToast({ show: true, type: "error", msg: "Tell us a bit more about the project." })
+      setToast({ show: true, type: "error", msg: t("contact.toast.notes") })
       const notesField = form.elements.namedItem("notes") as HTMLElement | null
       notesField?.focus()
       return
@@ -661,12 +698,12 @@ const ContactSection = () => {
       if (!response.ok || result?.ok === false) {
         throw new Error(result?.error || `Request failed (${response.status})`)
       }
-      setToast({ show: true, type: "success", msg: "Request sent ✅ — we’ll reply within 48h" })
+      setToast({ show: true, type: "success", msg: t("contact.toast.success") })
       form.reset()
       const firstField = form.elements.namedItem("name") as HTMLElement | null
       firstField?.focus()
     } catch (error: any) {
-      setToast({ show: true, type: "error", msg: error?.message || "Failed to send. Try again." })
+      setToast({ show: true, type: "error", msg: error?.message || t("contact.toast.error") })
       const firstField = form.elements.namedItem("name") as HTMLElement | null
       firstField?.focus()
     } finally {
@@ -675,7 +712,7 @@ const ContactSection = () => {
   }
 
   return (
-    <section id="contact" className="relative py-24 text-white/70 sm:py-28">
+    <section id="contact" className="relative scroll-mt-24 py-12 text-white/70 sm:py-16 lg:py-24">
       <div className="container mx-auto max-w-4xl px-4 sm:px-6">
         <motion.div
           initial="hidden"
@@ -685,12 +722,12 @@ const ContactSection = () => {
           className="rounded-3xl border border-white/10 bg-white/5 p-10 text-white/70 shadow-[0_10px_40px_rgba(0,0,0,.35)] backdrop-blur-md"
         >
           <motion.div variants={fadeIn} custom={0} className="text-center">
-            <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">Partner with CntpdLab</h2>
-            <p className="mt-3 max-w-xl mx-auto text-sm leading-relaxed text-white/70 sm:text-base">
-              Share a quick brief — we’ll return a technical scope within 48h.
+            <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">{t("contact.title")}</h2>
+            <p className="mx-auto mt-3 max-w-xl text-base leading-relaxed text-white/70">
+              {t("contact.subtitle")}
             </p>
-            <p className="mt-2 max-w-xl mx-auto text-sm leading-relaxed text-white/70 sm:text-base">
-              Prefer ASAP? DM on Telegram{' '}
+            <p className="mx-auto mt-2 max-w-xl text-base leading-relaxed text-white/70">
+              {t("contact.subtitleSecondary")} {" "}
               <a
                 href="https://t.me/cntpdlab"
                 target="_blank"
@@ -710,24 +747,24 @@ const ContactSection = () => {
             className="mt-6 space-y-4 sm:mt-8"
             aria-label="CntpdLab project inquiry form"
           >
-            <div className="grid gap-4 sm:grid-cols-2">
-              <label className="flex flex-col gap-2">
-                <span className="text-xs font-semibold uppercase tracking-[0.2em] text-white/50">Name</span>
+            <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
+              <label className="flex flex-1 flex-col gap-2">
+                <span className="text-xs font-semibold uppercase tracking-[0.2em] text-white/50">{t("contact.name")}</span>
                 <input
                   type="text"
                   name="name"
                   placeholder="Founder's name"
-                  className="rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white placeholder-white/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60"
+                  className="rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-base text-white placeholder-white/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60"
                   required
                 />
               </label>
-              <label className="flex flex-col gap-2">
-                <span className="text-xs font-semibold uppercase tracking-[0.2em] text-white/50">Email</span>
+              <label className="flex flex-1 flex-col gap-2">
+                <span className="text-xs font-semibold uppercase tracking-[0.2em] text-white/50">{t("contact.email")}</span>
                 <input
                   type="email"
                   name="email"
                   placeholder="you@startup.com"
-                  className="rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white placeholder-white/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60"
+                  className="rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-base text-white placeholder-white/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60"
                   required
                 />
               </label>
@@ -743,28 +780,32 @@ const ContactSection = () => {
             />
 
             <label className="flex flex-col gap-2">
-              <span className="text-xs font-semibold uppercase tracking-[0.2em] text-white/50">Project Notes</span>
+              <span className="text-xs font-semibold uppercase tracking-[0.2em] text-white/50">{t("contact.notes")}</span>
               <textarea
                 name="notes"
                 placeholder="Roadmap, timelines, budget—whatever helps us align fast."
-                className="min-h-[160px] rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white placeholder-white/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60"
+                className="min-h-[160px] rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-base text-white placeholder-white/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60"
                 required
               />
             </label>
 
             <div className="grid gap-4 sm:grid-cols-[auto_1fr]">
-              <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-xs text-white/60">
-                <p className="font-semibold text-white">Need it faster?</p>
+              <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-xs text-white/60 sm:text-sm">
+                <p className="font-semibold text-white">{t("contact.needFasterTitle")}</p>
                 <p>
-                  Drop a DM on Telegram <a href="https://t.me/cntpdlab" className="text-emerald-300 hover:underline">@cntpdlab</a>.
+                  {t("contact.needFasterCopy")}{" "}
+                  <a href="https://t.me/cntpdlab" className="text-emerald-300 hover:underline">
+                    @cntpdlab
+                  </a>
+                  .
                 </p>
               </div>
               <button
                 type="submit"
                 disabled={isLoading}
-                className={`${primaryButtonClasses} w-full justify-center disabled:cursor-not-allowed disabled:opacity-60`}
+                className={`${primaryButtonClasses} w-full justify-center text-base disabled:cursor-not-allowed disabled:opacity-60 min-h-[44px]`}
               >
-                {isLoading ? "Sending..." : "Request Scope"}
+                {isLoading ? t("contact.sending") : t("contact.submit")}
               </button>
             </div>
           </form>

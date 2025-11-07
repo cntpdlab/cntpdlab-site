@@ -1,0 +1,43 @@
+{
+  "badge": {
+    "status": "CntpdLab · MVP за лічені тижні"
+  },
+  "nav": {
+    "work": "Проєкти",
+    "expertise": "Експертиза",
+    "contact": "Контакт"
+  },
+  "hero": {
+    "headlineLine1": "Full-stack MVP.",
+    "headlineLine2": "Запускаю швидко.",
+    "subtitle": "Next.js, React, Tailwind та Python — створюю сучасні веб-додатки й Telegram-боти за тижні.",
+    "ctaPrimary": "Подивитися роботи",
+    "ctaSecondary": "Зв’язатися",
+    "ctaTelegram": "Telegram →"
+  },
+  "projects": {
+    "title": "Ключові проєкти",
+    "subtitle": "Добірка проєктів, які показують як CntpdLab масштабує ідеї у стійкі платформи.",
+    "ctaRequest": "Запросити схожий",
+    "ctaOutline": "Подивитися план"
+  },
+  "contact": {
+    "title": "Партнерство з CntpdLab",
+    "subtitle": "Коротко опишіть запит — протягом 48 годин надамо технічний скоп.",
+    "subtitleSecondary": "Терміново? Напишіть у Telegram",
+    "name": "Ім’я",
+    "email": "Email",
+    "notes": "Нотатки про проєкт",
+    "needFasterTitle": "Потрібно швидше?",
+    "needFasterCopy": "Напишіть у Telegram",
+    "submit": "Надіслати запит",
+    "sending": "Надсилаємо...",
+    "toast": {
+      "invalid": "Будь ласка, вкажіть коректні ім’я та контакт.",
+      "notes": "Додайте трохи більше деталей про проєкт.",
+      "success": "Запит надіслано ✅ — відповімо протягом 48 годин",
+      "error": "Не вдалося надіслати. Спробуйте ще раз."
+    }
+  }
+}
+
