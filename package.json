@@ -6,7 +6,8 @@
     "build": "next build",
     "dev": "next dev",
     "lint": "eslint .",
-    "start": "next start"
+    "start": "next start",
+    "postbuild": "next-sitemap"
   },
   "dependencies": {
     "@emotion/is-prop-valid": "latest",
@@ -73,7 +74,4 @@
     "tw-animate-css": "1.3.3",
     "typescript": "^5"
   }
-}
-"scripts": {
-  "postbuild": "next-sitemap"
 }
