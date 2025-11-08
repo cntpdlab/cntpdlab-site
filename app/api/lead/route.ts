@@ -4,10 +4,18 @@ import { z } from "zod"
 export const runtime = "nodejs"
 export const dynamic = "force-dynamic"
 
-const headers = {
+const corsHeaders = {
+  "access-control-allow-origin": "*",
+  "access-control-allow-methods": "POST,OPTIONS",
+  "access-control-allow-headers": "Content-Type",
+} as const
+
+const baseHeaders = {
   "content-type": "application/json",
   "cache-control": "no-store",
-} as const
+}
+
+const headers = { ...baseHeaders, ...corsHeaders } as const
 
 const rateLimitWindowMs = 8_000
 const rateLimiter = new Map<string, number>()
@@ -108,5 +116,10 @@ export async function POST(req: Request) {
     return jsonResponse({ ok: false, error: "server_error", detail: message }, 500)
   }
 }
+
+export async function OPTIONS() {
+  return new NextResponse(null, { status: 204, headers: corsHeaders })
+}
+
 
 
