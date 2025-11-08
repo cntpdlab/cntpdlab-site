@@ -643,6 +643,11 @@ const RecentMVPsSection = () => {
   )
 }
 
+// QA checklist:
+// - /api/tg-test returns { ok: true } in prod and message appears in Telegram.
+// - Submitting the form shows a green success toast and clears fields.
+// - On network/env errors → red toast with a clear message, no raw “Failed to fetch”.
+// - Works in incognito / with adblockers (no localhost URLs).
 const ContactSection = () => {
   const fadeIn = useFadeIn()
   const [isLoading, setIsLoading] = useState(false)
@@ -688,22 +693,28 @@ const ContactSection = () => {
       return
     }
 
+    setIsLoading(true)
     try {
-      setIsLoading(true)
       const response = await fetch("/api/lead", {
         method: "POST",
-        body: formData,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, notes }),
       })
-      const result = await response.json().catch(() => ({}))
-      if (!response.ok || result?.ok === false) {
-        throw new Error(result?.error || `Request failed (${response.status})`)
+
+      const result = (await response.json().catch(() => ({}))) as { ok?: boolean; error?: string }
+
+      if (!response.ok || result?.ok !== true) {
+        throw new Error(result?.error || `HTTP ${response.status}`)
       }
+
       setToast({ show: true, type: "success", msg: t("contact.toast.success") })
       form.reset()
       const firstField = form.elements.namedItem("name") as HTMLElement | null
       firstField?.focus()
-    } catch (error: any) {
-      setToast({ show: true, type: "error", msg: error?.message || t("contact.toast.error") })
+    } catch (error) {
+      console.error(error)
+      const message = error instanceof Error ? error.message : t("contact.toast.error")
+      setToast({ show: true, type: "error", msg: message })
       const firstField = form.elements.namedItem("name") as HTMLElement | null
       firstField?.focus()
     } finally {
@@ -803,6 +814,7 @@ const ContactSection = () => {
               <button
                 type="submit"
                 disabled={isLoading}
+                aria-busy={isLoading}
                 className={`${primaryButtonClasses} w-full justify-center text-base disabled:cursor-not-allowed disabled:opacity-60 min-h-[44px]`}
               >
                 {isLoading ? t("contact.sending") : t("contact.submit")}
