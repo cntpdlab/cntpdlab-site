@@ -1,14 +1,31 @@
 import { NextResponse } from "next/server"
 
 export const runtime = "nodejs"
+export const dynamic = "force-dynamic"
 
-const handler = async () => {
+const headers = {
+  "content-type": "application/json",
+  "cache-control": "no-store",
+} as const
+
+const jsonResponse = (body: Record<string, unknown>, status = 200) =>
+  NextResponse.json(body, { status, headers })
+
+const handler = async (req: Request) => {
   try {
+    const internalKey = process.env.INTERNAL_HEALTH_KEY
+    if (internalKey) {
+      const url = new URL(req.url)
+      if (url.searchParams.get("key") !== internalKey) {
+        return jsonResponse({ ok: false, error: "forbidden" }, 403)
+      }
+    }
+
     const botToken = process.env.TELEGRAM_BOT_TOKEN
     const chatId = process.env.TELEGRAM_CHAT_ID
 
     if (!botToken || !chatId) {
-      return NextResponse.json({ ok: false, error: "Missing envs" }, { status: 500 })
+      return jsonResponse({ ok: false, error: "server_error", detail: "Missing envs" }, 500)
     }
 
     const telegramResponse = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
@@ -25,15 +42,16 @@ const handler = async () => {
     const detail = (await telegramResponse.json().catch(() => ({}))) as Record<string, unknown>
 
     if (!telegramResponse.ok || detail?.ok !== true) {
-      return NextResponse.json({ ok: false, detail }, { status: 502 })
+      return jsonResponse({ ok: false, error: "telegram_failed", detail }, 502)
     }
 
-    return NextResponse.json({ ok: true, detail })
+    return jsonResponse({ ok: true })
   } catch (error) {
     const message = error instanceof Error ? error.message : "Server error"
-    return NextResponse.json({ ok: false, error: message }, { status: 500 })
+    return jsonResponse({ ok: false, error: "server_error", detail: message }, 500)
   }
 }
 
 export { handler as GET }
+
 

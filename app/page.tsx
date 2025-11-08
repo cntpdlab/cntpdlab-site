@@ -644,10 +644,10 @@ const RecentMVPsSection = () => {
 }
 
 // QA checklist:
-// - /api/tg-test returns { ok: true } in prod and message appears in Telegram.
-// - Submitting the form shows a green success toast and clears fields.
-// - On network/env errors → red toast with a clear message, no raw “Failed to fetch”.
-// - Works in incognito / with adblockers (no localhost URLs).
+// - GET /api/lead returns 405 JSON in prod.
+// - /api/tg-test (with key if set) returns { ok: true } in prod.
+// - Form submit in prod triggers green toast and Telegram message.
+// - Validation or rate-limit errors show explicit red toasts (no “Failed to fetch”).
 const ContactSection = () => {
   const fadeIn = useFadeIn()
   const [isLoading, setIsLoading] = useState(false)
@@ -673,13 +673,13 @@ const ContactSection = () => {
     const name = String(formData.get("name") ?? "").trim()
     const email = String(formData.get("email") ?? "").trim()
     const notes = String(formData.get("notes") ?? "").trim()
-    const honeypot = String(formData.get("hp") ?? "")
+    const honeypot = String(formData.get("extra_field") ?? "")
 
     if (honeypot) {
       return
     }
 
-    if (name.length < 2 || (!email.includes("@") && !email.startsWith("@"))) {
+    if (name.length < 1) {
       setToast({ show: true, type: "error", msg: t("contact.toast.invalid") })
       const firstField = form.elements.namedItem("name") as HTMLElement | null
       firstField?.focus()
@@ -698,13 +698,27 @@ const ContactSection = () => {
       const response = await fetch("/api/lead", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, notes }),
+        body: JSON.stringify({
+          name,
+          email,
+          notes,
+          company: honeypot,
+        }),
       })
 
-      const result = (await response.json().catch(() => ({}))) as { ok?: boolean; error?: string }
+      const result = (await response.json().catch(() => ({}))) as {
+        ok?: boolean
+        error?: string
+        issues?: { fieldErrors?: Record<string, string[]> }
+      }
 
       if (!response.ok || result?.ok !== true) {
-        throw new Error(result?.error || `HTTP ${response.status}`)
+        const validationMessage =
+          result?.error === "validation"
+            ? "Please check the fields (email can be blank)."
+            : undefined
+
+        throw new Error(validationMessage || result?.error || `HTTP ${response.status}`)
       }
 
       setToast({ show: true, type: "success", msg: t("contact.toast.success") })
@@ -776,17 +790,17 @@ const ContactSection = () => {
                   name="email"
                   placeholder="you@startup.com"
                   className="rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-base text-white placeholder-white/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60"
-                  required
                 />
+                <span className="text-xs text-white/40">Email optional</span>
               </label>
             </div>
 
             <input
               type="text"
-              name="hp"
+              name="extra_field"
               tabIndex={-1}
               autoComplete="off"
-              className="hidden"
+              className="absolute left-[-9999px] top-auto h-0 w-0 opacity-0 pointer-events-none"
               aria-hidden="true"
             />
 

@@ -1,28 +1,75 @@
 import { NextResponse } from "next/server"
+import { z } from "zod"
 
 export const runtime = "nodejs"
+export const dynamic = "force-dynamic"
 
-type LeadPayload = {
-  name?: string
-  email?: string
-  notes?: string
-}
+const headers = {
+  "content-type": "application/json",
+  "cache-control": "no-store",
+} as const
+
+const rateLimitWindowMs = 8_000
+const rateLimiter = new Map<string, number>()
+
+const LeadSchema = z.object({
+  name: z.string().trim().min(1).max(80),
+  email: z
+    .string()
+    .trim()
+    .max(120)
+    .optional()
+    .refine((value) => !value || /^[^@\s]+@[^@\s]+$/.test(value), "Invalid email"),
+  notes: z.string().trim().max(2000).optional(),
+  company: z.string().optional(),
+  website: z.string().optional(),
+})
 
 const sanitize = (value: unknown) =>
   typeof value === "string" ? value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;") : "-"
 
+const jsonResponse = (body: Record<string, unknown>, status = 200) =>
+  NextResponse.json(body, { status, headers })
+
 export async function POST(req: Request) {
+  const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown"
+  const method = req.method
+  console.log("[lead] request", { method, ip })
+
   try {
-    const body = (await req.json().catch(() => ({}))) as LeadPayload
-    const name = body?.name?.trim() || ""
-    const email = body?.email?.trim() || ""
-    const notes = body?.notes?.trim() || ""
+    const rawBody = await req.json().catch(() => ({}))
+    const parsed = LeadSchema.safeParse(rawBody)
+    console.log("[lead] validation", { success: parsed.success, ip })
+
+    if (!parsed.success) {
+      return jsonResponse(
+        { ok: false, error: "validation", issues: parsed.error.flatten() },
+        400
+      )
+    }
+
+    const { name, email, notes, company, website } = parsed.data
+
+    const isHoneypot = Boolean(company || website)
+    if (isHoneypot) {
+      console.log("[lead] honeypot", { ip })
+      return jsonResponse({ ok: true, skip: "honeypot" })
+    }
+
+    const now = Date.now()
+    const lastRequestAt = rateLimiter.get(ip) ?? 0
+    if (now - lastRequestAt < rateLimitWindowMs) {
+      console.log("[lead] rate_limited", { ip })
+      return jsonResponse({ ok: false, error: "rate_limited" }, 429)
+    }
+    rateLimiter.set(ip, now)
 
     const botToken = process.env.TELEGRAM_BOT_TOKEN
     const chatId = process.env.TELEGRAM_CHAT_ID
 
     if (!botToken || !chatId) {
-      return NextResponse.json({ ok: false, error: "Missing envs" }, { status: 500 })
+      console.log("[lead] missing envs", { ip })
+      return jsonResponse({ ok: false, error: "server_error", detail: "Missing envs" }, 500)
     }
 
     const message = [
@@ -46,18 +93,21 @@ export async function POST(req: Request) {
     })
 
     const responseBody = (await telegramResponse.json().catch(() => ({}))) as { ok?: boolean; [key: string]: unknown }
+    console.log("[lead] telegram", { status: telegramResponse.status, ok: responseBody?.ok, ip })
 
     if (!telegramResponse.ok || responseBody?.ok !== true) {
-      return NextResponse.json(
-        { ok: false, error: "Telegram failed", detail: responseBody },
-        { status: 502 }
+      return jsonResponse(
+        { ok: false, error: "telegram_failed", detail: responseBody },
+        502
       )
     }
 
-    return NextResponse.json({ ok: true })
+    return jsonResponse({ ok: true })
   } catch (error) {
     const message = error instanceof Error ? error.message : "Server error"
-    return NextResponse.json({ ok: false, error: message }, { status: 500 })
+    console.log("[lead] error", { ip, message })
+    return jsonResponse({ ok: false, error: "server_error", detail: message }, 500)
   }
 }
+
 
