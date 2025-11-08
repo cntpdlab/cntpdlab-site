@@ -21,8 +21,7 @@ const LeadSchema = z.object({
     .optional()
     .refine((value) => !value || /^[^@\s]+@[^@\s]+$/.test(value), "Invalid email"),
   notes: z.string().trim().max(2000).optional(),
-  company: z.string().optional(),
-  website: z.string().optional(),
+  extra_field: z.string().optional(),
 })
 
 const sanitize = (value: unknown) =>
@@ -48,9 +47,9 @@ export async function POST(req: Request) {
       )
     }
 
-    const { name, email, notes, company, website } = parsed.data
+    const { name, email, notes, extra_field } = parsed.data
 
-    const isHoneypot = Boolean(company || website)
+    const isHoneypot = Boolean(extra_field && extra_field.trim().length > 0)
     if (isHoneypot) {
       console.log("[lead] honeypot", { ip })
       return jsonResponse({ ok: true, skip: "honeypot" })

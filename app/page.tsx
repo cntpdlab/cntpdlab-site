@@ -673,9 +673,9 @@ const ContactSection = () => {
     const name = String(formData.get("name") ?? "").trim()
     const email = String(formData.get("email") ?? "").trim()
     const notes = String(formData.get("notes") ?? "").trim()
-    const honeypot = String(formData.get("extra_field") ?? "")
+    const extraField = String(formData.get("extra_field") ?? "")
 
-    if (honeypot) {
+    if (extraField) {
       return
     }
 
@@ -702,7 +702,7 @@ const ContactSection = () => {
           name,
           email,
           notes,
-          company: honeypot,
+          extra_field: extraField,
         }),
       })
 
