@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react"
 import CSSCover from "@/components/CSSCover"
+import Footer from "@/components/Footer"
 import { useI18n } from "@/hooks/use-i18n"
 import { ArrowUpRight, Mail, Zap, Code2, Rocket, Users } from "lucide-react"
 import { motion, useReducedMotion } from "framer-motion"
@@ -852,36 +853,6 @@ const ContactSection = () => {
   )
 }
 
-const FooterSection = () => {
-  const year = new Date().getFullYear()
-  return (
-    <footer className="border-t border-white/10 py-10 text-white/70">
-      <div className="container mx-auto flex max-w-6xl flex-col items-center gap-4 px-4 text-center md:px-6">
-        <div>
-          <p className="text-lg font-semibold text-white">CntpdLab</p>
-          <p className="mt-1 text-sm text-white/60">Building software velocity for founders and product teams.</p>
-        </div>
-        <p className="mt-8 text-center text-sm text-white/50 whitespace-nowrap">
-          CntpdLab — boutique full-stack studio building fast MVPs and automation for founders and product teams.
-        </p>
-        <p className="text-sm text-white/50">
-          © {year} CntpdLab ·
-          <a href="mailto:cntpdlab@gmail.com" className="mx-1 text-white/70 transition-smooth hover:text-white">
-            cntpdlab@gmail.com
-          </a>
-          ·
-          <a href="https://t.me/cntpdlab" target="_blank" rel="noreferrer" className="ml-1 text-white/70 transition-smooth hover:text-white">
-            @cntpdlab
-          </a>
-        </p>
-        <p className="text-xs text-white/50 text-center mt-8">
-          © {new Date().getFullYear()} CntpdLab · Full-stack delivery on Next.js + Node · Deployed on Vercel
-        </p>
-      </div>
-    </footer>
-  )
-}
-
 export default function Page() {
   return (
     <main className="relative flex min-h-screen flex-col overflow-x-hidden">
@@ -890,7 +861,7 @@ export default function Page() {
       <ProjectsSection />
       <ContactSection />
       <RecentMVPsSection />
-      <FooterSection />
+      <Footer />
     </main>
   )
 }
